@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estrategia SEO - Andrés Gaviria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0B0B0F;
+            --secondary: #5B5F6A;
+            --hairline: #E6E7EB;
+            --fog: #F5F5F7;
+            --white: #FFFFFF;
+            --accent: #0071E3;
+            --margin-x: 96px;
+            --margin-y: 72px;
+            --fs-hero: 96px;
+            --fs-h1: 80px;
+            --fs-h2: 64px;
+            --fs-body: 32px;
+            --fs-small: 24px;
+            --fs-caption: 22px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: #000;
+            font-family: 'SF Pro Display', 'SF Pro Text', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--ink);
+        }
+
+        #deck-container {
+            width: 1920px;
+            height: 1080px;
+            background-color: var(--white);
+            position: relative;
+            overflow: hidden;
+            transform-origin: center center;
+            box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: var(--margin-y) var(--margin-x);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            background: var(--white);
+        }
+
+        .slide.fog {
+            background: var(--fog);
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: var(--fs-h1);
+            font-weight: 600;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            color: var(--ink);
+            margin-bottom: 48px;
+        }
+
+        .slide-cover h1 {
+            font-size: var(--fs-hero);
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: var(--fs-h2);
+            font-weight: 600;
+            letter-spacing: -1.5px;
+            color: var(--ink);
+            margin-bottom: 24px;
+        }
+
+        h3 {
+            font-size: 48px;
+            font-weight: 600;
+            letter-spacing: -1px;
+            color: var(--ink);
+        }
+
+        h4 {
+            font-size: 36px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--ink);
+            margin-bottom: 16px;
+        }
+
+        p, li {
+            font-size: var(--fs-body);
+            color: var(--secondary);
+            line-height: 1.4;
+            letter-spacing: -0.01em;
+        }
+
+        .small {
+            font-size: var(--fs-small);
+        }
+
+        .caption {
+            font-size: var(--fs-caption);
+            color: var(--secondary);
+        }
+
+        .keyword {
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        .accent {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: var(--fs-caption);
+            color: var(--secondary);
+            margin-bottom: 16px;
+        }
+
+        .layout-left {
+            justify-content: center;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .layout-title-top {
+            justify-content: flex-start;
+            padding-top: var(--margin-y);
+        }
+
+        ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        li {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+        }
+
+        .split-graphic {
+            display: flex;
+            width: 100%;
+            height: 520px;
+            border: 1px solid var(--hairline);
+            border-radius: 28px;
+            overflow: hidden;
+            margin-top: 48px;
+        }
+
+        .split-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 48px;
+        }
+
+        .split-panel.left {
+            background: var(--fog);
+            border-right: 1px solid var(--hairline);
+        }
+
+        .split-panel.right {
+            background: var(--white);
+        }
+
+        .panel-label {
+            font-size: var(--fs-caption);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--secondary);
+            margin-bottom: 16px;
+        }
+
+        .panel-caption {
+            font-size: 26px;
+            color: var(--secondary);
+            margin-top: 16px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 96px;
+            margin-top: 32px;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 48px;
+            margin-top: 32px;
+        }
+
+        .flow-block ul {
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .flow-block li {
+            font-size: 28px;
+            display: block;
+            color: var(--secondary);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 24px 48px;
+            margin-top: 32px;
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .metric-value {
+            font-size: 56px;
+            color: var(--ink);
+            font-weight: 600;
+            letter-spacing: -1px;
+        }
+
+        .metric-label {
+            font-size: 26px;
+            color: var(--secondary);
+        }
+
+        .keyword-columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 48px;
+            margin-top: 32px;
+        }
+
+        .highlight-card {
+            background: var(--fog);
+            border: 1px solid var(--hairline);
+            border-radius: 24px;
+            padding: 32px;
+        }
+
+        .keyword-list {
+            gap: 12px;
+        }
+
+        .keyword-list li {
+            display: block;
+            font-size: 24px;
+            color: var(--secondary);
+        }
+
+        .keyword-list li.primary {
+            color: var(--ink);
+            font-weight: 500;
+        }
+
+        .phase-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 72px;
+            margin-top: 32px;
+        }
+
+        .phase-label {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: var(--fs-caption);
+            color: var(--secondary);
+            margin-bottom: 16px;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            margin-top: 32px;
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 32px;
+            align-items: baseline;
+        }
+
+        .timeline-item .week {
+            font-size: 28px;
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        .timeline-item .detail {
+            font-size: 26px;
+            color: var(--secondary);
+        }
+
+        .outline-card {
+            background: var(--fog);
+            border: 1px solid var(--hairline);
+            border-radius: 24px;
+            padding: 32px;
+            margin-top: 24px;
+            max-height: 520px;
+            overflow-y: auto;
+        }
+
+        .two-column .outline-card {
+            margin-top: 0;
+            max-height: 480px;
+        }
+
+        .outline-card::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .outline-card::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 3px;
+        }
+
+        .outline-card::-webkit-scrollbar-thumb {
+            background: var(--hairline);
+            border-radius: 3px;
+        }
+
+        .outline-card::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        .outline-card h4 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .outline-card ul {
+            gap: 12px;
+        }
+
+        .outline-card li {
+            font-size: 22px;
+            display: block;
+        }
+
+        .outline-card .section-title {
+            color: var(--ink);
+            font-weight: 600;
+            margin-top: 16px;
+            display: block;
+        }
+
+        .checklist {
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .checklist li {
+            font-size: 26px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .checklist li::before {
+            content: "☐";
+            font-size: 28px;
+            color: var(--accent);
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            font-size: 18px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-right: 12px;
+            font-weight: 500;
+        }
+
+        .tag.secondary {
+            background: var(--secondary);
+        }
+
+        .tag.support {
+            background: #34C759;
+        }
+
+        .article-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 32px;
+            align-items: start;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .article-row:last-child {
+            border-bottom: none;
+        }
+
+        .article-title {
+            font-size: 26px;
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        .article-kw {
+            font-size: 22px;
+            color: var(--secondary);
+        }
+
+        .scroll-content {
+            max-height: 780px;
+            overflow-y: auto;
+            padding-right: 24px;
+        }
+
+        .scroll-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scroll-content::-webkit-scrollbar-track {
+            background: var(--fog);
+            border-radius: 4px;
+        }
+
+        .scroll-content::-webkit-scrollbar-thumb {
+            background: var(--hairline);
+            border-radius: 4px;
+        }
+
+        .animate {
+            opacity: 0;
+            transform: translateY(18px);
+            animation: appleFadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .d-1 { animation-delay: 0.1s; }
+        .d-2 { animation-delay: 0.2s; }
+        .d-3 { animation-delay: 0.3s; }
+        .d-4 { animation-delay: 0.4s; }
+        .d-5 { animation-delay: 0.5s; }
+
+        @keyframes appleFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .nav-controls {
+            position: absolute;
+            bottom: 32px;
+            right: 32px;
+            display: flex;
+            gap: 16px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+
+        body:hover .nav-controls {
+            opacity: 1;
+        }
+
+        .nav-btn {
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            color: var(--ink);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .slide-counter {
+            position: absolute;
+            bottom: 32px;
+            left: 32px;
+            font-size: 18px;
+            color: var(--secondary);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+
+        body:hover .slide-counter {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="deck-container">
+
+        <!-- SLIDE 1: Cover -->
+        <section class="slide slide-cover layout-left active">
+            <p class="eyebrow animate">Estrategia SEO</p>
+            <h1 class="animate d-1">Andrés Gaviria</h1>
+            <p class="animate d-2 small">Guía de implementación para el equipo.</p>
+            <p class="animate d-3 caption" style="margin-top: 48px;">Keywords, outlines y checklist de ejecución.</p>
+        </section>
+
+        <!-- SLIDE 2: Objetivo -->
+        <section class="slide layout-left fog">
+            <p class="eyebrow animate">Objetivo</p>
+            <h1 class="animate d-1">Posicionar a Andrés Gaviria<br>en búsquedas clave de Antioquia</h1>
+            <p class="animate d-2 small" style="max-width: 1200px;">Capturar tráfico de votantes que buscan información sobre candidatos, elecciones y propuestas para la Cámara de Representantes.</p>
+        </section>
+
+        <!-- SLIDE 3: Metricas objetivo -->
+        <section class="slide layout-left">
+            <h1 class="animate">Metas del proyecto</h1>
+            <div class="metrics-grid animate d-1">
+                <div class="metric">
+                    <p class="metric-value">3</p>
+                    <p class="metric-label">Etapas de contenido</p>
+                </div>
+                <div class="metric">
+                    <p class="metric-value">12</p>
+                    <p class="metric-label">Artículos totales</p>
+                </div>
+                <div class="metric">
+                    <p class="metric-value">35+</p>
+                    <p class="metric-label">Keywords objetivo</p>
+                </div>
+            </div>
+            <div class="metrics-grid animate d-2" style="margin-top: 48px;">
+                <div class="metric">
+                    <p class="metric-value">1</p>
+                    <p class="metric-label">Página pilar</p>
+                </div>
+                <div class="metric">
+                    <p class="metric-value">4</p>
+                    <p class="metric-label">Páginas de apoyo</p>
+                </div>
+                <div class="metric">
+                    <p class="metric-value">7</p>
+                    <p class="metric-label">Artículos secundarios</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 4: Estructura de 3 etapas -->
+        <section class="slide layout-title-top fog">
+            <p class="eyebrow animate">Arquitectura</p>
+            <h1 class="animate d-1">3 etapas de contenido</h1>
+            <div class="three-column animate d-2">
+                <div class="highlight-card">
+                    <span class="tag">Principal</span>
+                    <h4 style="margin-top: 16px;">Página Pilar</h4>
+                    <p style="font-size: 24px; margin-top: 12px;">Contenido central que posiciona el nombre y propuesta general del candidato.</p>
+                    <p style="font-size: 22px; margin-top: 24px; color: var(--ink); font-weight: 500;">1 artículo extenso</p>
+                </div>
+                <div class="highlight-card">
+                    <span class="tag support">Apoyo</span>
+                    <h4 style="margin-top: 16px;">Propuestas</h4>
+                    <p style="font-size: 24px; margin-top: 12px;">Artículos por cada eje temático: minería, infraestructura, economía, seguridad.</p>
+                    <p style="font-size: 22px; margin-top: 24px; color: var(--ink); font-weight: 500;">4 artículos</p>
+                </div>
+                <div class="highlight-card">
+                    <span class="tag secondary">Secundario</span>
+                    <h4 style="margin-top: 16px;">Informativos</h4>
+                    <p style="font-size: 24px; margin-top: 12px;">Contenido educativo sobre votación, funciones de la Cámara y contexto electoral.</p>
+                    <p style="font-size: 22px; margin-top: 24px; color: var(--ink); font-weight: 500;">7 artículos</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 5: Clusters de Keywords -->
+        <section class="slide layout-title-top">
+            <p class="eyebrow animate">Keywords</p>
+            <h1 class="animate d-1">Clústeres objetivo</h1>
+            <div class="keyword-columns animate d-2">
+                <div class="highlight-card">
+                    <span class="tag">Principal</span>
+                    <h4 style="margin-top: 16px;">Candidato + Electoral</h4>
+                    <ul class="keyword-list" style="margin-top: 16px;">
+                        <li class="primary">andres gaviria camara antioquia</li>
+                        <li class="primary">candidato 106 centro democratico</li>
+                        <li>candidatos camara antioquia 2026</li>
+                        <li>elecciones camara antioquia 2026</li>
+                        <li>centro democratico antioquia candidatos</li>
+                        <li>representantes a la camara antioquia</li>
+                    </ul>
+                </div>
+                <div class="highlight-card">
+                    <span class="tag support">Apoyo</span>
+                    <h4 style="margin-top: 16px;">Propuestas temáticas</h4>
+                    <ul class="keyword-list" style="margin-top: 16px;">
+                        <li class="primary">mineria legal antioquia</li>
+                        <li class="primary">infraestructura vial antioquia</li>
+                        <li class="primary">seguridad antioquia propuestas</li>
+                        <li class="primary">empleo formal antioquia</li>
+                        <li>sector minero energetico antioquia</li>
+                        <li>vias terciarias antioquia</li>
+                        <li>economia antioquia 2026</li>
+                    </ul>
+                </div>
+                <div class="highlight-card">
+                    <span class="tag secondary">Secundario</span>
+                    <h4 style="margin-top: 16px;">Informativo / Educativo</h4>
+                    <ul class="keyword-list" style="margin-top: 16px;">
+                        <li class="primary">como votar camara de representantes</li>
+                        <li class="primary">que hace un representante a la camara</li>
+                        <li>elecciones legislativas 2026 colombia</li>
+                        <li>funciones camara de representantes</li>
+                        <li>puesto de votacion antioquia</li>
+                        <li>tarjeton camara 2026</li>
+                        <li>cuando son las elecciones 2026</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6: ETAPA 1 - Pagina Pilar -->
+        <section class="slide layout-left fog">
+            <p class="eyebrow animate">Etapa 1</p>
+            <h1 class="animate d-1">Página Pilar</h1>
+            <p class="animate d-2 small">El contenido más importante. Todo enlaza aquí.</p>
+        </section>
+
+        <!-- SLIDE 7: Outline Pagina Pilar -->
+        <section class="slide layout-title-top">
+            <p class="eyebrow animate">Etapa 1 · Outline</p>
+            <h2 class="animate d-1" style="font-size: 48px;">Andrés Gaviria: Candidato a la Cámara por Antioquia #106</h2>
+            <div class="two-column animate d-2">
+                <div>
+                    <p style="font-size: 22px; color: var(--accent); font-weight: 500; margin-bottom: 16px;">Keywords objetivo</p>
+                    <ul class="keyword-list">
+                        <li class="primary">andres gaviria camara antioquia</li>
+                        <li class="primary">candidato 106 centro democratico antioquia</li>
+                        <li>andres gaviria propuestas</li>
+                        <li>votar 106 antioquia</li>
+                    </ul>
+                    <p style="font-size: 22px; color: var(--accent); font-weight: 500; margin-top: 32px; margin-bottom: 16px;">Especificaciones</p>
+                    <ul class="keyword-list">
+                        <li>Extensión: 1,500 - 2,000 palabras</li>
+                        <li>URL: /andres-gaviria-camara-antioquia</li>
+                        <li>Enlaza a: todas las páginas de apoyo</li>
+                    </ul>
+                </div>
+                <div class="outline-card" style="margin-top: 0;">
+                    <h4>Estructura del artículo</h4>
+                    <ul>
+                        <li><span class="section-title">H1:</span> Andrés Gaviria: Candidato a la Cámara de Representantes por Antioquia</li>
+                        <li><span class="section-title">Intro:</span> Presentación personal + visión para Antioquia + #106 Centro Democrático</li>
+                        <li><span class="section-title">H2:</span> ¿Quién es Andrés Gaviria?</li>
+                        <li>→ Trayectoria profesional y compromiso con Antioquia</li>
+                        <li><span class="section-title">H2:</span> Mis 4 compromisos con Antioquia</li>
+                        <li>→ Resumen de: Minería, Infraestructura, Economía, Seguridad (enlazar a cada artículo de apoyo)</li>
+                        <li><span class="section-title">H2:</span> ¿Por qué el #106?</li>
+                        <li>→ Explicación del tarjetón y cómo encontrar el voto</li>
+                        <li><span class="section-title">H2:</span> Únete a la campaña</li>
+                        <li>→ CTA a formulario de voluntarios</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 8: ETAPA 2 - Paginas de Apoyo -->
+        <section class="slide layout-left fog">
+            <p class="eyebrow animate">Etapa 2</p>
+            <h1 class="animate d-1">Páginas de Apoyo</h1>
+            <p class="animate d-2 small">4 artículos. Uno por cada eje de propuesta.</p>
+        </section>
+
+        <!-- SLIDE 9: Apoyo 1 - Mineria -->
+        <section class="slide layout-title-top">
+            <p class="eyebrow animate">Etapa 2 · Artículo 1</p>
+            <h2 class="animate d-1" style="font-size: 44px;">Minería Legal en Antioquia: Propuestas de Andrés Gaviria</h2>
+            <div class="two-column animate d-2">
+                <div>
+                    <p style="font-size: 22px; color: #34C759; font-weight: 500; margin-bottom: 16px;">Keywords objetivo</p>
+                    <ul class="keyword-list">
+                        <li class="primary">mineria legal antioquia</li>
+                        <li class="primary">sector minero energetico antioquia</li>
+                        <li>mineria responsable colombia</li>
+                        <li>propuestas mineria antioquia 2026</li>
+                    </ul>
+                    <p style="font-size: 22px; color: #34C759; font-weight: 500; margin-top: 32px; margin-bottom: 16px;">Especificaciones</p>
+                    <ul class="keyword-list">
+                        <li>Extensión: 800 - 1,200 palabras</li>
+                        <li>URL: /mineria-legal-antioquia</li>
+                        <li>Enlaza a: página pilar + artículo economía</li>
+                    </ul>
+                </div>
+                <div class="outline-card" style="margin-top: 0;">
+                    <h4>Estructura del artículo</h4>
+                    <ul>
+                        <li><span class="section-title">H1:</span> Minería Legal en Antioquia: Por un sector responsable y generador de empleo</li>
+                        <li><span class="section-title">Intro:</span> Contexto del sector minero en Antioquia + problema de ilegalidad</li>
+                        <li><span class="section-title">H2:</span> El problema: minería ilegal vs. desarrollo</li>
+                        <li>→ Datos sobre impacto de la ilegalidad en Antioquia</li>
+                        <li><span class="section-title">H2:</span> Mi propuesta: formalización + inversión responsable</li>
+                        <li>→ 3-4 acciones concretas desde la Cámara</li>
+                        <li><span class="section-title">H2:</span> Beneficios para Antioquia</li>
+                        <li>→ Empleo, regalías, desarrollo regional</li>
+                        <li><span class="section-title">CTA:</span> Enlace a página pilar + formulario</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 10: Apoyo 2 - Infraestructura -->
+        <section class="slide layout-title-top">
+            <p class="eyebrow animate">Etapa 2 · Artículo 2</p>
+            <h2 class="animate d-1" style="font-size: 44px;">Infraestructura Vial para Antioquia: Conectar para Progresar</h2>
+            <div class="two-column animate d-2">
+                <div>
+                    <p style="font-size: 22px; color: #34C759; font-weight: 500; margin-bottom: 16px;">Keywords objetivo</p>
+                    <ul class="keyword-list">
+                        <li class="primary">infraestructura vial antioquia</li>
+                        <li class="primary">vias terciarias antioquia</li>
+                        <li>carreteras antioquia propuestas</li>
+                        <li>conectividad rural antioquia</li>
+                    </ul>
+                    <p style="font-size: 22px; color: #34C759; font-weight: 500; margin-top: 32px; margin-bottom: 16px;">Especificaciones</p>
+                    <ul class="keyword-list">
+                        <li>Extensión: 800 - 1,200 palabras</li>
+                        <li>URL: /infraestructura-vial-antioquia</li>
+                        <li>Enlaza a: página pilar + artículo economía</li>
+                    </ul>
+                </div>
+                <div class="outline-card" style="margin-top: 0;">
+                    <h4>Estructura del artículo</h4>
+                    <ul>
+                        <li><span class="section-title">H1:</span> Infraestructura Vial en Antioquia: Conectar regiones para el progreso</li>
+                        <li><span class="section-title">Intro:</span> Importancia de las vías para el desarrollo económico de Antioquia</li>
+                        <li><span class="section-title">H2:</span> El reto: vías terciarias abandonadas</li>
+                        <li>→ Estado actual de conectividad en subregiones</li>
+                        <li><span class="section-title">H2:</span> Mi propuesta desde la Cámara</li>
+                        <li>→ Gestión de recursos + priorización de proyectos viales</li>
+                        <li><span class="section-title">H2:</span> Regiones beneficiadas</li>
+                        <li>→ Impacto en comercio, turismo y calidad de vida</li>
+                        <li><span class="section-title">CTA:</span> Enlace a página pilar + formulario</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 11: Apoyo 3 - Economia -->
+        <section class="slide layout-title-top">
+            <p class="eyebrow animate">Etapa 2 · Artículo 3</p>
+            <h2 class="animate d-1" style="font-size: 44px;">Empleo y Economía en Antioquia: Menos Trabas, Más Oportunidades</h2>
+            <div class="two-column animate d-2">
+                <div>
+                    <p style="font-size: 22px; color: #34C759; font-weight: 500; margin-bottom: 16px;">Keywords objetivo</p>
+                    <ul class="keyword-list">
+                        <li class="primary">empleo formal antioquia</li>
+                        <li class="primary">economia antioquia 2026</li>
+                        <li>competitividad antioquia</li>
+                        <li>propuestas empleo antioquia</li>
+                    </ul>
+                    <p style="font-size: 22px; color: #34C759; font-weight: 500; margin-top: 32px; margin-bottom: 16px;">Especificaciones</p>
+                    <ul class="keyword-list">
+                        <li>Extensión: 800 - 1,200 palabras</li>
+                        <li>URL: /empleo-economia-antioquia</li>
+                        <li>Enlaza a: página pilar + minería + infraestructura</li>
+                    </ul>
+                </div>
+                <div class="outline-card" style="margin-top: 0;">
+                    <h4>Estructura del artículo</h4>
+                    <ul>
+                        <li><span class="section-title">H1:</span> Empleo y Economía en Antioquia: Propuestas para crecer</li>
+                        <li><span class="section-title">Intro:</span> Antioquia como motor económico + necesidad de competitividad</li>
+                        <li><span class="section-title">H2:</span> El problema: informalidad y barreras</li>
+                        <li>→ Datos de empleo informal y dificultades para emprender</li>
+                        <li><span class="section-title">H2:</span> Mi propuesta: reglas claras para producir</li>
+                        <li>→ Simplificación tributaria + apoyo a PYMES + formalización</li>
+                        <li><span class="section-title">H2:</span> Antioquia productiva</li>
+                        <li>→ Visión de industria, campo y comercio fortalecido</li>
+                        <li><span class="section-title">CTA:</span> Enlace a página pilar + formulario</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 12: Apoyo 4 - Seguridad -->
+        <section class="slide layout-title-top">
+            <p class="eyebrow animate">Etapa 2 · Artículo 4</p>
+            <h2 class="animate d-1" style="font-size: 44px;">Seguridad en Antioquia: Sin Seguridad No Hay Libertad</h2>
+            <div class="two-column animate d-2">
+                <div>
+                    <p style="font-size: 22px; color: #34C759; font-weight: 500; margin-bottom: 16px;">Keywords objetivo</p>
+                    <ul class="keyword-list">
+                        <li class="primary">seguridad antioquia propuestas</li>
+                        <li class="primary">seguridad ciudadana antioquia</li>
+                        <li>propuestas seguridad medellin</li>
+                        <li>autoridad policia antioquia</li>
+                    </ul>
+                    <p style="font-size: 22px; color: #34C759; font-weight: 500; margin-top: 32px; margin-bottom: 16px;">Especificaciones</p>
+                    <ul class="keyword-list">
+                        <li>Extensión: 800 - 1,200 palabras</li>
+                        <li>URL: /seguridad-antioquia</li>
+                        <li>Enlaza a: página pilar</li>
+                    </ul>
+                </div>
+                <div class="outline-card" style="margin-top: 0;">
+                    <h4>Estructura del artículo</h4>
+                    <ul>
+                        <li><span class="section-title">H1:</span> Seguridad en Antioquia: Respaldo a la autoridad y protección ciudadana</li>
+                        <li><span class="section-title">Intro:</span> La seguridad como base de la libertad y el progreso</li>
+                        <li><span class="section-title">H2:</span> La situación actual</li>
+                        <li>→ Retos de seguridad en Antioquia urbano y rural</li>
+                        <li><span class="section-title">H2:</span> Mi posición: respaldo firme a la autoridad</li>
+                        <li>→ Propuestas legislativas + recursos para fuerza pública</li>
+                        <li><span class="section-title">H2:</span> Antioquia segura para trabajar y vivir</li>
+                        <li>→ Conexión entre seguridad y desarrollo económico</li>
+                        <li><span class="section-title">CTA:</span> Enlace a página pilar + formulario</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 13: ETAPA 3 - Secundarios -->
+        <section class="slide layout-left fog">
+            <p class="eyebrow animate">Etapa 3</p>
+            <h1 class="animate d-1">Artículos Secundarios</h1>
+            <p class="animate d-2 small">7 artículos informativos. Capturan tráfico educativo.</p>
+        </section>
+
+        <!-- SLIDE 14: Lista Secundarios -->
+        <section class="slide layout-title-top">
+            <p class="eyebrow animate">Etapa 3 · Artículos</p>
+            <h2 class="animate d-1" style="font-size: 48px;">Contenido informativo</h2>
+            <div class="scroll-content animate d-2" style="margin-top: 24px;">
+                <div class="article-row">
+                    <div>
+                        <p class="article-title">1. ¿Cómo votar a la Cámara de Representantes en 2026?</p>
+                    </div>
+                    <div>
+                        <p class="article-kw"><strong>Keywords:</strong> como votar camara de representantes, votar camara 2026, tarjeton camara colombia</p>
+                        <p class="article-kw" style="margin-top: 8px;"><strong>URL:</strong> /como-votar-camara-representantes-2026</p>
+                    </div>
+                </div>
+                <div class="article-row">
+                    <div>
+                        <p class="article-title">2. ¿Qué hace un Representante a la Cámara?</p>
+                    </div>
+                    <div>
+                        <p class="article-kw"><strong>Keywords:</strong> que hace un representante a la camara, funciones camara de representantes, representante a la camara colombia</p>
+                        <p class="article-kw" style="margin-top: 8px;"><strong>URL:</strong> /que-hace-representante-camara</p>
+                    </div>
+                </div>
+                <div class="article-row">
+                    <div>
+                        <p class="article-title">3. Elecciones Legislativas 2026: Todo lo que debes saber</p>
+                    </div>
+                    <div>
+                        <p class="article-kw"><strong>Keywords:</strong> elecciones legislativas 2026 colombia, elecciones congreso 2026, cuando son elecciones 2026</p>
+                        <p class="article-kw" style="margin-top: 8px;"><strong>URL:</strong> /elecciones-legislativas-2026-colombia</p>
+                    </div>
+                </div>
+                <div class="article-row">
+                    <div>
+                        <p class="article-title">4. Candidatos a la Cámara por Antioquia 2026</p>
+                    </div>
+                    <div>
+                        <p class="article-kw"><strong>Keywords:</strong> candidatos camara antioquia 2026, lista candidatos camara antioquia, camara de representantes antioquia</p>
+                        <p class="article-kw" style="margin-top: 8px;"><strong>URL:</strong> /candidatos-camara-antioquia-2026</p>
+                    </div>
+                </div>
+                <div class="article-row">
+                    <div>
+                        <p class="article-title">5. ¿Cómo consultar mi puesto de votación en Antioquia?</p>
+                    </div>
+                    <div>
+                        <p class="article-kw"><strong>Keywords:</strong> puesto de votacion antioquia, consultar puesto votacion, donde votar antioquia</p>
+                        <p class="article-kw" style="margin-top: 8px;"><strong>URL:</strong> /consultar-puesto-votacion-antioquia</p>
+                    </div>
+                </div>
+                <div class="article-row">
+                    <div>
+                        <p class="article-title">6. Centro Democrático en Antioquia: Candidatos 2026</p>
+                    </div>
+                    <div>
+                        <p class="article-kw"><strong>Keywords:</strong> centro democratico antioquia, candidatos centro democratico 2026, partido centro democratico antioquia</p>
+                        <p class="article-kw" style="margin-top: 8px;"><strong>URL:</strong> /centro-democratico-antioquia-2026</p>
+                    </div>
+                </div>
+                <div class="article-row">
+                    <div>
+                        <p class="article-title">7. 8 de Marzo 2026: Guía completa del día de elecciones</p>
+                    </div>
+                    <div>
+                        <p class="article-kw"><strong>Keywords:</strong> 8 marzo 2026 elecciones, dia elecciones colombia 2026, horario votacion 2026</p>
+                        <p class="article-kw" style="margin-top: 8px;"><strong>URL:</strong> /elecciones-8-marzo-2026-guia</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 15: Outline Secundario 1 -->
+        <section class="slide layout-title-top">
+            <p class="eyebrow animate">Etapa 3 · Outline detallado</p>
+            <h2 class="animate d-1" style="font-size: 40px;">¿Cómo votar a la Cámara de Representantes en 2026?</h2>
+            <div class="two-column animate d-2">
+                <div class="outline-card" style="margin-top: 0;">
+                    <h4>Estructura</h4>
+                    <ul>
+                        <li><span class="section-title">H1:</span> ¿Cómo votar a la Cámara de Representantes en 2026?</li>
+                        <li><span class="section-title">Intro:</span> Importancia del voto + fecha 8 de marzo</li>
+                        <li><span class="section-title">H2:</span> ¿Qué es la Cámara de Representantes?</li>
+                        <li><span class="section-title">H2:</span> Paso a paso para votar</li>
+                        <li>→ 1. Consultar puesto de votación</li>
+                        <li>→ 2. Llevar cédula</li>
+                        <li>→ 3. Identificar el tarjetón correcto</li>
+                        <li>→ 4. Marcar el número del candidato</li>
+                        <li><span class="section-title">H2:</span> ¿Cómo es el tarjetón de Cámara?</li>
+                        <li>→ Imagen ilustrativa del tarjetón</li>
+                        <li><span class="section-title">H2:</span> Conoce a Andrés Gaviria #106</li>
+                        <li>→ CTA a página pilar</li>
+                    </ul>
+                </div>
+                <div class="outline-card" style="margin-top: 0;">
+                    <h4>Outline: ¿Qué hace un Representante?</h4>
+                    <ul>
+                        <li><span class="section-title">H1:</span> ¿Qué hace un Representante a la Cámara?</li>
+                        <li><span class="section-title">Intro:</span> La Cámara como voz de las regiones</li>
+                        <li><span class="section-title">H2:</span> Funciones principales</li>
+                        <li>→ Legislar, controlar al gobierno, representar</li>
+                        <li><span class="section-title">H2:</span> ¿Cómo beneficia a Antioquia?</li>
+                        <li>→ Gestión de recursos y proyectos</li>
+                        <li><span class="section-title">H2:</span> Diferencia con el Senado</li>
+                        <li><span class="section-title">H2:</span> Andrés Gaviria: Mi compromiso</li>
+                        <li>→ CTA a página pilar</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="caption animate d-3" style="margin-top: 24px;">Extensión: 600-800 palabras cada uno. Enlazar siempre a página pilar.</p>
+        </section>
+
+        <!-- SLIDE 16: Outline Secundario 2 -->
+        <section class="slide layout-title-top">
+            <p class="eyebrow animate">Etapa 3 · Outlines adicionales</p>
+            <h2 class="animate d-1" style="font-size: 40px;">Artículos informativos de contexto</h2>
+            <div class="two-column animate d-2">
+                <div class="outline-card" style="margin-top: 0;">
+                    <h4>Elecciones Legislativas 2026</h4>
+                    <ul>
+                        <li><span class="section-title">H1:</span> Elecciones Legislativas 2026: Guía completa</li>
+                        <li><span class="section-title">H2:</span> ¿Qué se elige el 8 de marzo?</li>
+                        <li>→ Senado + Cámara explicados</li>
+                        <li><span class="section-title">H2:</span> Calendario electoral</li>
+                        <li><span class="section-title">H2:</span> ¿Cómo prepararte para votar?</li>
+                        <li><span class="section-title">H2:</span> Candidatos destacados en Antioquia</li>
+                        <li>→ Mención a Andrés Gaviria #106</li>
+                    </ul>
+                </div>
+                <div class="outline-card" style="margin-top: 0;">
+                    <h4>Candidatos Cámara Antioquia 2026</h4>
+                    <ul>
+                        <li><span class="section-title">H1:</span> Candidatos a la Cámara por Antioquia 2026</li>
+                        <li><span class="section-title">H2:</span> ¿Cuántos representantes elige Antioquia?</li>
+                        <li><span class="section-title">H2:</span> Partidos y movimientos</li>
+                        <li><span class="section-title">H2:</span> Centro Democrático: Andrés Gaviria #106</li>
+                        <li>→ Destacar propuestas y perfil</li>
+                        <li><span class="section-title">H2:</span> ¿Cómo elegir a tu candidato?</li>
+                        <li>→ CTA a página pilar</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="caption animate d-3" style="margin-top: 24px;">Estos artículos capturan búsquedas informativas y redirigen tráfico al candidato.</p>
+        </section>
+
+        <!-- SLIDE 17: Interlinking -->
+        <section class="slide layout-left fog">
+            <p class="eyebrow animate">Arquitectura</p>
+            <h1 class="animate d-1">Estrategia de enlaces internos</h1>
+            <div class="two-column animate d-2">
+                <div>
+                    <h4 style="margin-bottom: 24px;">Regla de oro</h4>
+                    <ul style="gap: 24px;">
+                        <li style="display: block; font-size: 28px;">Todos los artículos enlazan a la <span class="accent">página pilar</span></li>
+                        <li style="display: block; font-size: 28px;">La página pilar enlaza a las <span class="keyword">4 páginas de apoyo</span></li>
+                        <li style="display: block; font-size: 28px;">Artículos secundarios enlazan a apoyo cuando sea relevante</li>
+                        <li style="display: block; font-size: 28px;">Todo artículo termina con CTA al <span class="keyword">formulario de únete</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 24px;">Anchor texts sugeridos</h4>
+                    <ul style="gap: 16px;">
+                        <li style="display: block; font-size: 26px;">"Conoce a Andrés Gaviria, candidato #106"</li>
+                        <li style="display: block; font-size: 26px;">"Ver todas las propuestas de Andrés Gaviria"</li>
+                        <li style="display: block; font-size: 26px;">"Propuestas de minería legal en Antioquia"</li>
+                        <li style="display: block; font-size: 26px;">"Únete a la campaña"</li>
+                        <li style="display: block; font-size: 26px;">"Aprende cómo votar el 8 de marzo"</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 18: Checklist SEO On-Page -->
+        <section class="slide layout-title-top">
+            <p class="eyebrow animate">Implementación</p>
+            <h1 class="animate d-1">Checklist SEO On-Page</h1>
+            <div class="two-column animate d-2">
+                <div>
+                    <h4 style="margin-bottom: 16px;">Cada artículo debe tener</h4>
+                    <ul class="checklist">
+                        <li>Keyword principal en H1</li>
+                        <li>Keyword en URL (slug)</li>
+                        <li>Keyword en primer párrafo</li>
+                        <li>Keyword en al menos 1 H2</li>
+                        <li>Meta title con keyword (máx 60 caracteres)</li>
+                        <li>Meta description con keyword (máx 155 caracteres)</li>
+                        <li>Al menos 1 imagen con alt text descriptivo</li>
+                        <li>Enlaces internos (mínimo 2)</li>
+                        <li>CTA final con enlace a formulario</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 16px;">Configuración técnica</h4>
+                    <ul class="checklist">
+                        <li>Yoast SEO o RankMath instalado</li>
+                        <li>Sitemap XML activo</li>
+                        <li>Google Search Console conectado</li>
+                        <li>Indexación solicitada por URL</li>
+                        <li>Schema markup de Person/Politician</li>
+                        <li>Open Graph para redes sociales</li>
+                        <li>Velocidad de carga optimizada</li>
+                        <li>Mobile-friendly verificado</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 19: Checklist por articulo -->
+        <section class="slide layout-title-top">
+            <p class="eyebrow animate">Implementación</p>
+            <h1 class="animate d-1">Checklist de producción</h1>
+            <div class="two-column animate d-2">
+                <div>
+                    <h4 style="margin-bottom: 16px;">Antes de publicar</h4>
+                    <ul class="checklist">
+                        <li>Outline aprobado</li>
+                        <li>Contenido redactado según outline</li>
+                        <li>Revisión ortográfica completada</li>
+                        <li>Imágenes seleccionadas y optimizadas</li>
+                        <li>Meta title y description escritos</li>
+                        <li>URL configurada correctamente</li>
+                        <li>Enlaces internos agregados</li>
+                        <li>CTA incluido</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 16px;">Después de publicar</h4>
+                    <ul class="checklist">
+                        <li>Solicitar indexación en Search Console</li>
+                        <li>Verificar que carga correctamente en móvil</li>
+                        <li>Compartir en redes sociales</li>
+                        <li>Agregar enlace desde página pilar (si aplica)</li>
+                        <li>Documentar en hoja de seguimiento</li>
+                        <li>Monitorear posición en 7 días</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 20: Cronograma -->
+        <section class="slide layout-left fog">
+            <h1 class="animate">Cronograma de publicación</h1>
+            <p class="animate d-1 small">Prioridad por impacto. Elecciones: 8 de Marzo.</p>
+            <div class="timeline animate d-2">
+                <div class="timeline-item">
+                    <div class="week">Semana 1</div>
+                    <div class="detail"><strong>Página pilar</strong> + configuración técnica (Search Console, Yoast). Indexación inicial.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="week">Semana 2</div>
+                    <div class="detail"><strong>4 páginas de apoyo</strong>: Minería, Infraestructura, Economía, Seguridad.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="week">Semana 3</div>
+                    <div class="detail"><strong>3 secundarios</strong>: Cómo votar, Qué hace un representante, Elecciones 2026.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="week">Semana 4</div>
+                    <div class="detail"><strong>4 secundarios</strong>: Candidatos Antioquia, Puesto votación, Centro Democrático, Guía 8 marzo.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="week">Semana 5-8</div>
+                    <div class="detail">Optimización basada en datos de Search Console. Ajustes de contenido según rendimiento.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 21: Metricas de exito -->
+        <section class="slide layout-left">
+            <h1 class="animate">Métricas de éxito</h1>
+            <div class="metrics-grid animate d-1">
+                <div class="metric">
+                    <p class="metric-value">Top 10</p>
+                    <p class="metric-label">Posición para "andres gaviria camara"</p>
+                </div>
+                <div class="metric">
+                    <p class="metric-value">Top 20</p>
+                    <p class="metric-label">Para keywords de propuestas</p>
+                </div>
+                <div class="metric">
+                    <p class="metric-value">100%</p>
+                    <p class="metric-label">Páginas indexadas</p>
+                </div>
+            </div>
+            <div class="two-column animate d-2" style="margin-top: 48px;">
+                <div>
+                    <h4>Revisar semanalmente</h4>
+                    <ul style="gap: 16px; margin-top: 16px;">
+                        <li style="display: block; font-size: 26px;">Impresiones en Search Console</li>
+                        <li style="display: block; font-size: 26px;">Clics por keyword</li>
+                        <li style="display: block; font-size: 26px;">Posición promedio</li>
+                        <li style="display: block; font-size: 26px;">Páginas más visitadas</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Acciones de optimización</h4>
+                    <ul style="gap: 16px; margin-top: 16px;">
+                        <li style="display: block; font-size: 26px;">Mejorar meta descriptions con bajo CTR</li>
+                        <li style="display: block; font-size: 26px;">Expandir contenido de páginas top</li>
+                        <li style="display: block; font-size: 26px;">Agregar keywords emergentes</li>
+                        <li style="display: block; font-size: 26px;">Fortalecer enlaces internos</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 22: Resumen ejecutivo -->
+        <section class="slide layout-left fog">
+            <p class="eyebrow animate">Resumen</p>
+            <h1 class="animate d-1">Plan de acción</h1>
+            <ul style="gap: 40px; margin-top: 24px;">
+                <li class="animate d-2">
+                    <span class="keyword" style="min-width: 200px; font-size: 40px;">12</span>
+                    <span style="font-size: 32px;">Artículos a producir en 4 semanas</span>
+                </li>
+                <li class="animate d-3">
+                    <span class="keyword" style="min-width: 200px; font-size: 40px;">35+</span>
+                    <span style="font-size: 32px;">Keywords a posicionar</span>
+                </li>
+                <li class="animate d-4">
+                    <span class="keyword" style="min-width: 200px; font-size: 40px;">3</span>
+                    <span style="font-size: 32px;">Etapas: Principal → Apoyo → Secundarios</span>
+                </li>
+                <li class="animate d-5">
+                    <span class="keyword" style="min-width: 200px; font-size: 40px;">1</span>
+                    <span style="font-size: 32px;">Objetivo: que busquen "Andrés Gaviria" y lo encuentren</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- SLIDE 23: Cierre -->
+        <section class="slide slide-cover layout-left">
+            <p class="eyebrow animate">Siguiente paso</p>
+            <h1 class="animate d-1">Comenzar con<br>la página pilar</h1>
+            <p class="animate d-2 small" style="max-width: 900px;">El equipo puede iniciar la redacción usando los outlines de esta presentación. Cada artículo publicado es un paso más hacia el posicionamiento.</p>
+            <p class="animate d-3 caption" style="margin-top: 48px;"><span class="accent">#106</span> · Andrés Gaviria · Cámara por Antioquia</p>
+        </section>
+
+        <!-- Navigation Controls -->
+        <div class="nav-controls">
+            <button class="nav-btn" onclick="prevSlide()">&#8592;</button>
+            <button class="nav-btn" onclick="nextSlide()">&#8594;</button>
+        </div>
+
+        <div class="slide-counter">
+            <span id="current-slide">1</span> / <span id="total-slides">23</span>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const container = document.getElementById('deck-container');
+        const currentSlideEl = document.getElementById('current-slide');
+        const totalSlidesEl = document.getElementById('total-slides');
+
+        totalSlidesEl.textContent = slides.length;
+
+        function resize() {
+            const scaleX = window.innerWidth / 1920;
+            const scaleY = window.innerHeight / 1080;
+            const scale = Math.min(scaleX, scaleY);
+            container.style.transform = `scale(${scale})`;
+        }
+
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+            currentSlideEl.textContent = index + 1;
+
+            const current = slides[index];
+            const animatedElements = current.querySelectorAll('.animate');
+            animatedElements.forEach(el => {
+                el.style.animation = 'none';
+                el.offsetHeight;
+                el.style.animation = null;
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        window.addEventListener('resize', resize);
+        resize();
+    </script>
+</body>
+
+</html>
