@@ -1,0 +1,1528 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Implementación Digital — GBQ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /*
+         * APPLE KEYNOTE STYLE SYSTEM V2
+         * GBQ — Plataforma Digital Integrada
+         */
+
+      :root {
+        --ink: #0b0b0f;
+        --secondary: #5b5f6a;
+        --hairline: #e6e7eb;
+        --fog: #f5f5f7;
+        --white: #ffffff;
+        --accent: #0071e3;
+
+        --margin-x: 96px;
+        --margin-y: 72px;
+
+        --fs-hero: 96px;
+        --fs-h1: 80px;
+        --fs-h2: 64px;
+        --fs-body: 32px;
+        --fs-small: 24px;
+        --fs-caption: 22px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        background-color: #000;
+        font-family:
+          "SF Pro Display",
+          "SF Pro Text",
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: var(--ink);
+      }
+
+      /* Presentation Container — 16:9 Fixed */
+      #deck-container {
+        width: 1920px;
+        height: 1080px;
+        background-color: var(--white);
+        position: relative;
+        overflow: hidden;
+        transform-origin: center center;
+        box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Slide Base */
+      .slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: var(--margin-y) var(--margin-x);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        background: var(--white);
+      }
+
+      .slide.fog {
+        background: var(--fog);
+      }
+
+      .slide.active {
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 10;
+      }
+
+      /* Typography */
+      h1 {
+        font-size: var(--fs-h1);
+        font-weight: 600;
+        letter-spacing: -2px;
+        line-height: 1.1;
+        color: var(--ink);
+        margin-bottom: 48px;
+      }
+
+      .slide-cover h1 {
+        font-size: var(--fs-hero);
+        margin-bottom: 24px;
+      }
+
+      h2 {
+        font-size: var(--fs-h2);
+        font-weight: 600;
+        letter-spacing: -1.5px;
+        color: var(--ink);
+        margin-bottom: 24px;
+      }
+
+      h3 {
+        font-size: 48px;
+        font-weight: 600;
+        letter-spacing: -1px;
+        color: var(--ink);
+      }
+
+      p,
+      li {
+        font-size: var(--fs-body);
+        color: var(--secondary);
+        line-height: 1.4;
+        letter-spacing: -0.01em;
+      }
+
+      .small {
+        font-size: var(--fs-small);
+      }
+
+      .caption {
+        font-size: var(--fs-caption);
+        color: var(--secondary);
+      }
+
+      .keyword {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .accent {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: var(--fs-caption);
+        color: var(--secondary);
+        margin-bottom: 16px;
+      }
+
+      /* Layout Helpers */
+      .layout-left {
+        justify-content: center;
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      .layout-center {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      .layout-title-top {
+        justify-content: flex-start;
+        padding-top: var(--margin-y);
+      }
+
+      /* Clean list */
+      ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      li {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+      }
+
+      /* Metrics */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 24px 48px;
+        margin-top: 32px;
+      }
+
+      .metrics-grid.two-col {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .metric {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .metric-value {
+        font-size: 56px;
+        color: var(--ink);
+        font-weight: 600;
+        letter-spacing: -1px;
+      }
+
+      .metric-value.accent {
+        color: var(--accent);
+      }
+
+      .metric-label {
+        font-size: 26px;
+        color: var(--secondary);
+      }
+
+      /* Timeline */
+      .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+        margin-top: 32px;
+      }
+
+      .timeline-item {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 32px;
+        align-items: baseline;
+      }
+
+      .timeline-item .phase {
+        font-size: 28px;
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .timeline-item .detail {
+        font-size: 26px;
+        color: var(--secondary);
+      }
+
+      /* Checklist */
+      .checklist {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 20px;
+      }
+
+      .checklist li {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 24px;
+        color: var(--secondary);
+      }
+
+      .checklist li::before {
+        content: "";
+        flex-shrink: 0;
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        border: 2px solid var(--hairline);
+        background: var(--white);
+      }
+
+      .checklist-section {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .checklist-section h3 {
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--ink);
+        letter-spacing: -0.5px;
+      }
+
+      .entregables-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 48px;
+        margin-top: 32px;
+      }
+
+      /* Gantt Chart */
+      .gantt {
+        width: 100%;
+        margin-top: 40px;
+      }
+
+      .gantt-months {
+        display: grid;
+        grid-template-columns: 180px repeat(4, 1fr);
+        gap: 0;
+        margin-bottom: 8px;
+      }
+
+      .gantt-months span {
+        font-family: inherit;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--secondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-align: center;
+      }
+
+      .gantt-months span:first-child {
+        text-align: left;
+      }
+
+      .gantt-body {
+        position: relative;
+      }
+
+      .gantt-grid {
+        position: absolute;
+        top: 0;
+        left: 180px;
+        right: 0;
+        bottom: 0;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .gantt-grid-col {
+        border-left: 1px solid var(--hairline);
+      }
+
+      .gantt-grid-col:last-child {
+        border-right: 1px solid var(--hairline);
+      }
+
+      .gantt-row {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        align-items: center;
+        height: 56px;
+      }
+
+      .gantt-label {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      .gantt-track {
+        position: relative;
+        height: 32px;
+      }
+
+      .gantt-bar {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+      }
+
+      .gantt-bar.accent-bar {
+        background: var(--accent);
+      }
+
+      /* Gantt bar fill animation */
+      .slide.active .gantt-bar {
+        animation: ganttFill 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        transform-origin: left center;
+      }
+
+      .slide.active .gantt-bar.bar-d1 {
+        animation-delay: 0.4s;
+      }
+      .slide.active .gantt-bar.bar-d2 {
+        animation-delay: 0.55s;
+      }
+      .slide.active .gantt-bar.bar-d3 {
+        animation-delay: 0.7s;
+      }
+      .slide.active .gantt-bar.bar-d4 {
+        animation-delay: 0.85s;
+      }
+      .slide.active .gantt-bar.bar-d5 {
+        animation-delay: 1s;
+      }
+
+      @keyframes ganttFill {
+        from {
+          transform: scaleX(0);
+          opacity: 0;
+        }
+        to {
+          transform: scaleX(1);
+          opacity: 1;
+        }
+      }
+
+      .gantt-bar {
+        transform: scaleX(0);
+        opacity: 0;
+      }
+
+      /* Animations */
+      .animate {
+        opacity: 0;
+        transform: translateY(18px);
+        animation: appleFadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+
+      .d-1 {
+        animation-delay: 0.1s;
+      }
+      .d-2 {
+        animation-delay: 0.2s;
+      }
+      .d-3 {
+        animation-delay: 0.3s;
+      }
+      .d-4 {
+        animation-delay: 0.4s;
+      }
+      .d-5 {
+        animation-delay: 0.5s;
+      }
+
+      @keyframes appleFadeIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Navigation */
+      .nav-controls {
+        position: absolute;
+        bottom: 32px;
+        right: 32px;
+        display: flex;
+        gap: 16px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 100;
+      }
+
+      body:hover .nav-controls {
+        opacity: 1;
+      }
+
+      .nav-btn {
+        background: rgba(0, 0, 0, 0.05);
+        border: none;
+        color: var(--ink);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+      }
+
+      .nav-btn:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      /* Slide counter */
+      .slide-counter {
+        position: absolute;
+        bottom: 32px;
+        left: 32px;
+        font-size: 18px;
+        color: var(--secondary);
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 100;
+      }
+
+      body:hover .slide-counter {
+        opacity: 1;
+      }
+
+      /* Flow diagram */
+      .flow-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        margin-top: 48px;
+        width: 100%;
+      }
+
+      .flow-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 40px;
+        border-radius: 20px;
+        background: var(--fog);
+        min-width: 200px;
+        text-align: center;
+      }
+
+      .flow-box.accent-box {
+        background: var(--accent);
+      }
+
+      .flow-box.accent-box h3,
+      .flow-box.accent-box p {
+        color: var(--white);
+      }
+
+      .flow-box h3 {
+        font-size: 28px;
+        margin-bottom: 8px;
+      }
+
+      .flow-box p {
+        font-size: 20px;
+      }
+
+      .flow-arrow {
+        font-size: 32px;
+        color: var(--hairline);
+      }
+
+      /* Split layout */
+      .split-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 64px;
+        width: 100%;
+        margin-top: 32px;
+      }
+
+      .split-column {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .split-column h3 {
+        font-size: 36px;
+        margin-bottom: 24px;
+        color: var(--ink);
+      }
+
+      .split-column ul {
+        gap: 16px;
+      }
+
+      .split-column li {
+        font-size: 26px;
+        display: block;
+        padding-left: 24px;
+        position: relative;
+      }
+
+      .split-column li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 10px;
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+      }
+
+      </style>
+  </head>
+
+  <body>
+    <div id="deck-container">
+      <!-- SLIDE 1: Cover -->
+      <section class="slide slide-cover layout-left active">
+        <p class="eyebrow animate">GBQ</p>
+        <h1 class="animate d-1">Implementación<br />Digital</h1>
+        <p class="animate d-2 caption" style="margin-top: 24px">
+          E-commerce + CRM
+        </p>
+      </section>
+
+      <!-- SLIDE 2: Contexto -->
+      <section class="slide layout-left fog" style="padding-right: 160px">
+        <p class="eyebrow animate">Contexto</p>
+        <h1 class="animate d-1" style="margin-bottom: 56px">
+          Alcance
+        </h1>
+
+        <div style="display: flex; flex-direction: column; gap: 0; width: 100%">
+          <div
+            class="animate d-2"
+            style="
+              display: flex;
+              align-items: baseline;
+              gap: 32px;
+              padding: 28px 0;
+              border-bottom: 1px solid var(--hairline);
+            "
+          >
+            <span
+              style="
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--accent);
+                letter-spacing: 2px;
+                min-width: 28px;
+              "
+              >01</span
+            >
+            <span
+              style="
+                font-size: 36px;
+                font-weight: 600;
+                color: var(--ink);
+                min-width: 280px;
+                letter-spacing: -1px;
+              "
+              >E-commerce</span
+            >
+            <span
+              style="font-size: 26px; color: var(--secondary); line-height: 1.4"
+              >Reconstruir la plataforma desde cero.</span
+            >
+          </div>
+
+          <div
+            class="animate d-3"
+            style="
+              display: flex;
+              align-items: baseline;
+              gap: 32px;
+              padding: 28px 0;
+              border-bottom: 1px solid var(--hairline);
+            "
+          >
+            <span
+              style="
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--accent);
+                letter-spacing: 2px;
+                min-width: 28px;
+              "
+              >02</span
+            >
+            <span
+              style="
+                font-size: 36px;
+                font-weight: 600;
+                color: var(--ink);
+                min-width: 280px;
+                letter-spacing: -1px;
+              "
+              >Perfiles</span
+            >
+            <span
+              style="font-size: 26px; color: var(--secondary); line-height: 1.4"
+              >Productos, marcas y precios personalizados por cliente.</span
+            >
+          </div>
+
+          <div
+            class="animate d-4"
+            style="
+              display: flex;
+              align-items: baseline;
+              gap: 32px;
+              padding: 28px 0;
+              border-bottom: 1px solid var(--hairline);
+            "
+          >
+            <span
+              style="
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--accent);
+                letter-spacing: 2px;
+                min-width: 28px;
+              "
+              >03</span
+            >
+            <span
+              style="
+                font-size: 36px;
+                font-weight: 600;
+                color: var(--ink);
+                min-width: 280px;
+                letter-spacing: -1px;
+              "
+              >CRM</span
+            >
+            <span
+              style="font-size: 26px; color: var(--secondary); line-height: 1.4"
+              >Conectar la gestión de clientes con la tienda.</span
+            >
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SLIDE 3: Referente D'Luchi - Homepage -->
+      <section class="slide layout-title-top fog">
+        <p class="eyebrow animate">Referente</p>
+        <h1 class="animate d-1" style="font-size: 64px; margin-bottom: 32px">
+          D'Luchi
+        </h1>
+        <div
+          class="animate d-2"
+          style="
+            flex: 1;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--hairline);
+            min-height: 0;
+          "
+        >
+          <img
+            src="media/dluchi-homepage.png"
+            style="
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              object-position: top left;
+              display: block;
+            "
+          />
+        </div>
+      </section>
+
+      <!-- SLIDE 3b: Selector de líneas de negocio -->
+      <section class="slide layout-left">
+        <p class="eyebrow animate">Referente · D'Luchi</p>
+        <h1 class="animate d-1">Selector de <span class="accent">líneas</span></h1>
+        <p class="animate d-2" style="font-size: 28px; max-width: 900px; margin-bottom: 32px">
+          Multi-marca en un solo sitio. El cliente elige la línea<br />
+          y navega un catálogo adaptado.
+        </p>
+        <div
+          class="animate d-3"
+          style="
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--hairline);
+          "
+        >
+          <img
+            src="media/dluchi-selector-marcas.png"
+            style="
+              width: 100%;
+              height: auto;
+              display: block;
+            "
+          />
+        </div>
+        <p class="animate d-4 caption" style="margin-top: 32px">
+          GBQ puede aplicar esto con sus marcas: Aupa, Arum, BPL1, Dermahelp, etc.
+        </p>
+      </section>
+
+      <!-- SLIDE 3c: Formularios de captación -->
+      <section class="slide layout-title-top">
+        <p class="eyebrow animate">Referente · Captación de leads</p>
+        <h1 class="animate d-1" style="font-size: 64px; margin-bottom: 32px">
+          Formularios al <span class="accent">CRM</span>
+        </h1>
+        <div
+          class="animate d-2"
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            flex: 1;
+            min-height: 0;
+          "
+        >
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div
+              style="
+                flex: 1;
+                border-radius: 20px;
+                overflow: hidden;
+                border: 1px solid var(--hairline);
+                min-height: 0;
+              "
+            >
+              <img
+                src="media/dluchi-formulario-leads.png"
+                style="
+                  width: 100%;
+                  height: 100%;
+                  object-fit: contain;
+                  object-position: center;
+                  display: block;
+                  background: #fff;
+                "
+              />
+            </div>
+            <p class="caption" style="text-align: center">D'Luchi — Popup de captación</p>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div
+              style="
+                flex: 1;
+                border-radius: 20px;
+                overflow: hidden;
+                border: 1px solid var(--hairline);
+                min-height: 0;
+              "
+            >
+              <img
+                src="media/esic-formulario.png"
+                style="
+                  width: 100%;
+                  height: 100%;
+                  object-fit: contain;
+                  object-position: center;
+                  display: block;
+                  background: #fff;
+                "
+              />
+            </div>
+            <p class="caption" style="text-align: center">ESIC.co — Formulario de contacto</p>
+          </div>
+        </div>
+        <p class="animate d-3 caption" style="margin-top: 24px; text-align: center">
+          Los datos van directo al CRM. Sin perder oportunidades.
+        </p>
+      </section>
+
+      <!-- SLIDE 4: Solución - 3 Pilares -->
+      <section class="slide layout-left fog">
+        <p class="eyebrow animate">Solución</p>
+        <h1 class="animate d-1">Dos pilares,<br />una plataforma</h1>
+        <div class="metrics-grid two-col animate d-2">
+          <div class="metric">
+            <p class="metric-value accent">01</p>
+            <p class="metric-label">E-commerce personalizado</p>
+          </div>
+          <div class="metric">
+            <p class="metric-value accent">02</p>
+            <p class="metric-label">CRM integrado</p>
+          </div>
+        </div>
+        <p class="animate d-3 caption" style="margin-top: 64px">
+          Todo conectado. Datos centralizados. Ventas trazables.
+        </p>
+      </section>
+
+      <!-- SLIDE 5: E-commerce -->
+      <section class="slide layout-left" style="padding-right: 160px">
+        <p class="eyebrow animate">Pilar 1</p>
+        <h1 class="animate d-1" style="margin-bottom: 56px">
+          E-commerce <span class="accent">personalizado</span>
+        </h1>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            width: 100%;
+          "
+        >
+          <!-- Left column -->
+          <div style="display: flex; flex-direction: column">
+            <div
+              class="animate d-2"
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 20px;
+                padding: 20px 0;
+                border-bottom: 1px solid var(--hairline);
+              "
+            >
+              <span
+                style="
+                  font-size: 14px;
+                  font-weight: 600;
+                  color: var(--accent);
+                  letter-spacing: 2px;
+                  min-width: 24px;
+                "
+                >01</span
+              >
+              <span
+                style="
+                  font-size: 28px;
+                  font-weight: 600;
+                  color: var(--ink);
+                  min-width: 180px;
+                "
+                >Login</span
+              >
+              <span style="font-size: 22px; color: var(--secondary)"
+                >Acceso con cuenta y perfil</span
+              >
+            </div>
+            <div
+              class="animate d-2"
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 20px;
+                padding: 20px 0;
+                border-bottom: 1px solid var(--hairline);
+              "
+            >
+              <span
+                style="
+                  font-size: 14px;
+                  font-weight: 600;
+                  color: var(--accent);
+                  letter-spacing: 2px;
+                  min-width: 24px;
+                "
+                >02</span
+              >
+              <span
+                style="
+                  font-size: 28px;
+                  font-weight: 600;
+                  color: var(--ink);
+                  min-width: 180px;
+                "
+                >Catálogo</span
+              >
+              <span style="font-size: 22px; color: var(--secondary)"
+                >Productos visibles según perfil</span
+              >
+            </div>
+            <div
+              class="animate d-3"
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 20px;
+                padding: 20px 0;
+                border-bottom: 1px solid var(--hairline);
+              "
+            >
+              <span
+                style="
+                  font-size: 14px;
+                  font-weight: 600;
+                  color: var(--accent);
+                  letter-spacing: 2px;
+                  min-width: 24px;
+                "
+                >03</span
+              >
+              <span
+                style="
+                  font-size: 28px;
+                  font-weight: 600;
+                  color: var(--ink);
+                  min-width: 180px;
+                "
+                >Precios</span
+              >
+              <span style="font-size: 22px; color: var(--secondary)"
+                >Listas de precios por tipo de cliente</span
+              >
+            </div>
+            <div
+              class="animate d-3"
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 20px;
+                padding: 20px 0;
+              "
+            >
+              <span
+                style="
+                  font-size: 14px;
+                  font-weight: 600;
+                  color: var(--accent);
+                  letter-spacing: 2px;
+                  min-width: 24px;
+                "
+                >04</span
+              >
+              <span
+                style="
+                  font-size: 28px;
+                  font-weight: 600;
+                  color: var(--ink);
+                  min-width: 180px;
+                "
+                >Marcas</span
+              >
+              <span style="font-size: 22px; color: var(--secondary)"
+                >Acceso a marcas según acuerdos</span
+              >
+            </div>
+          </div>
+
+          <!-- Right column -->
+          <div style="display: flex; flex-direction: column">
+            <div
+              class="animate d-2"
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 20px;
+                padding: 20px 0;
+                border-bottom: 1px solid var(--hairline);
+              "
+            >
+              <span
+                style="
+                  font-size: 14px;
+                  font-weight: 600;
+                  color: var(--accent);
+                  letter-spacing: 2px;
+                  min-width: 24px;
+                "
+                >05</span
+              >
+              <span
+                style="
+                  font-size: 28px;
+                  font-weight: 600;
+                  color: var(--ink);
+                  min-width: 180px;
+                "
+                >Carrito</span
+              >
+              <span style="font-size: 22px; color: var(--secondary)"
+                >Agregar, modificar, guardar</span
+              >
+            </div>
+            <div
+              class="animate d-2"
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 20px;
+                padding: 20px 0;
+                border-bottom: 1px solid var(--hairline);
+              "
+            >
+              <span
+                style="
+                  font-size: 14px;
+                  font-weight: 600;
+                  color: var(--accent);
+                  letter-spacing: 2px;
+                  min-width: 24px;
+                "
+                >06</span
+              >
+              <span
+                style="
+                  font-size: 28px;
+                  font-weight: 600;
+                  color: var(--ink);
+                  min-width: 180px;
+                "
+                >Checkout</span
+              >
+              <span style="font-size: 22px; color: var(--secondary)"
+                >Pago integrado y confirmación</span
+              >
+            </div>
+            <div
+              class="animate d-3"
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 20px;
+                padding: 20px 0;
+                border-bottom: 1px solid var(--hairline);
+              "
+            >
+              <span
+                style="
+                  font-size: 14px;
+                  font-weight: 600;
+                  color: var(--accent);
+                  letter-spacing: 2px;
+                  min-width: 24px;
+                "
+                >07</span
+              >
+              <span
+                style="
+                  font-size: 28px;
+                  font-weight: 600;
+                  color: var(--ink);
+                  min-width: 180px;
+                "
+                >Historial</span
+              >
+              <span style="font-size: 22px; color: var(--secondary)"
+                >Pedidos anteriores y recompra</span
+              >
+            </div>
+            <div
+              class="animate d-3"
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 20px;
+                padding: 20px 0;
+              "
+            >
+              <span
+                style="
+                  font-size: 14px;
+                  font-weight: 600;
+                  color: var(--accent);
+                  letter-spacing: 2px;
+                  min-width: 24px;
+                "
+                >08</span
+              >
+              <span
+                style="
+                  font-size: 28px;
+                  font-weight: 600;
+                  color: var(--ink);
+                  min-width: 180px;
+                "
+                >Búsqueda</span
+              >
+              <span style="font-size: 22px; color: var(--secondary)"
+                >Filtros por marca y categoría</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5b: E-commerce Demo Video -->
+      <section class="slide layout-title-top fog">
+        <p class="eyebrow animate">Demo</p>
+        <h1 class="animate d-1" style="font-size: 64px; margin-bottom: 32px">
+          Demo <span class="accent">e-commerce</span>
+        </h1>
+        <div
+          class="animate d-2"
+          style="
+            flex: 1;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--hairline);
+            min-height: 0;
+            background: #f5f5f7;
+          "
+        >
+          <video
+            src="video/out/gbq-ecommerce.mp4"
+            autoplay
+            loop
+            muted
+            playsinline
+            style="
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+              display: block;
+            "
+          ></video>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: CRM -->
+      <section class="slide layout-left">
+        <p class="eyebrow animate">Pilar 2</p>
+        <h1 class="animate d-1">
+          CRM <span class="accent">integrado</span>
+        </h1>
+        <ul style="gap: 40px">
+          <li class="animate d-2">
+            <span class="keyword" style="min-width: 340px; font-size: 38px"
+              >Base de clientes</span
+            >
+            <span style="font-size: 30px"
+              >Todos los contactos en un solo lugar.</span
+            >
+          </li>
+          <li class="animate d-3">
+            <span class="keyword" style="min-width: 340px; font-size: 38px"
+              >Historial</span
+            >
+            <span style="font-size: 30px"
+              >Compras, interacciones y seguimiento.</span
+            >
+          </li>
+          <li class="animate d-4">
+            <span class="keyword" style="min-width: 340px; font-size: 38px"
+              >Segmentación</span
+            >
+            <span style="font-size: 30px"
+              >Agrupar clientes por tipo, ubicación, volumen.</span
+            >
+          </li>
+          <li class="animate d-5">
+            <span class="keyword" style="min-width: 340px; font-size: 38px"
+              >Conexión</span
+            >
+            <span style="font-size: 30px"
+              >Sincronizado con e-commerce.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <!-- SLIDE 7: Flujo Integrado -->
+      <section class="slide layout-title-top">
+        <p class="eyebrow animate">Flujo</p>
+        <h1 class="animate d-1" style="font-size: 64px">Cómo funciona todo junto</h1>
+
+        <div class="flow-container animate d-2">
+          <div class="flow-box">
+            <h3>Cliente</h3>
+            <p>Inicia sesión</p>
+          </div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-box accent-box">
+            <h3>E-commerce</h3>
+            <p>Ve su catálogo<br />y precios</p>
+          </div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-box">
+            <h3>Compra</h3>
+            <p>Pedido registrado</p>
+          </div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-box accent-box">
+            <h3>CRM</h3>
+            <p>Actualiza historial<br />y perfil</p>
+          </div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-box">
+            <h3>Seguimiento</h3>
+            <p>y recompra</p>
+          </div>
+        </div>
+
+        <p class="animate d-4 caption" style="margin-top: 48px; text-align: center">
+          Un ciclo continuo. Sin información perdida.
+        </p>
+      </section>
+
+      <!-- SLIDE 9: Entregables -->
+      <section class="slide layout-title-top">
+        <p class="eyebrow animate">Alcance</p>
+        <h1 class="animate d-1" style="font-size: 64px">Entregables</h1>
+        <div class="entregables-grid animate d-2" style="grid-template-columns: 1fr 1fr;">
+          <div class="checklist-section">
+            <h3>E-commerce</h3>
+            <ul class="checklist">
+              <li>Diseño UI responsive</li>
+              <li>Sistema de login y perfiles</li>
+              <li>Catálogo con precios dinámicos</li>
+              <li>Carrito y checkout</li>
+              <li>Pasarela de pagos</li>
+              <li>Panel de administración</li>
+            </ul>
+          </div>
+          <div class="checklist-section">
+            <h3>CRM</h3>
+            <ul class="checklist">
+              <li>Base de datos de clientes</li>
+              <li>Historial de compras</li>
+              <li>Segmentación y etiquetas</li>
+              <li>Dashboard de métricas</li>
+              <li>Exportación de datos</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 10: Cronograma -->
+      <section class="slide layout-title-top fog">
+        <p class="eyebrow animate">Timeline</p>
+        <h1 class="animate d-1">Cronograma</h1>
+        <p class="animate d-2 small">
+          Fases del proyecto. Tiempos a definir según alcance final.
+        </p>
+
+        <div class="gantt animate d-3">
+          <!-- Month headers -->
+          <div class="gantt-months">
+            <span></span>
+            <span>Mes 1</span>
+            <span>Mes 2</span>
+            <span>Mes 3</span>
+            <span>Mes 4</span>
+          </div>
+
+          <!-- Body with grid -->
+          <div class="gantt-body">
+            <!-- Background grid -->
+            <div class="gantt-grid">
+              <div class="gantt-grid-col"></div>
+              <div class="gantt-grid-col"></div>
+              <div class="gantt-grid-col"></div>
+              <div class="gantt-grid-col"></div>
+            </div>
+
+            <!-- Row 1: Discovery -->
+            <div class="gantt-row">
+              <div class="gantt-label" style="color: var(--ink)">Discovery</div>
+              <div class="gantt-track">
+                <div
+                  class="gantt-bar accent-bar bar-d1"
+                  style="left: 0%; width: 25%"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Row 2: E-commerce -->
+            <div class="gantt-row">
+              <div class="gantt-label" style="color: var(--ink)">E-commerce</div>
+              <div class="gantt-track">
+                <div
+                  class="gantt-bar accent-bar bar-d2"
+                  style="left: 12%; width: 55%"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Row 3: CRM -->
+            <div class="gantt-row">
+              <div class="gantt-label" style="color: var(--ink)">
+                CRM
+              </div>
+              <div class="gantt-track">
+                <div
+                  class="gantt-bar bar-d3"
+                  style="left: 25%; width: 50%; background: var(--hairline)"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Row 4: QA y Lanzamiento -->
+            <div class="gantt-row">
+              <div class="gantt-label" style="color: var(--ink)">
+                QA y Lanzamiento
+              </div>
+              <div class="gantt-track">
+                <div
+                  class="gantt-bar bar-d4"
+                  style="left: 75%; width: 25%; background: var(--hairline)"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="animate d-4 caption" style="margin-top: 48px">
+          Cronograma estimado. Se ajusta según requerimientos finales.
+        </p>
+      </section>
+
+      <!-- SLIDE 11: Próximos Pasos -->
+      <section class="slide layout-left">
+        <p class="eyebrow animate">Siguiente paso</p>
+        <h1 class="animate d-1">Próximos pasos</h1>
+        <ul style="gap: 40px">
+          <li class="animate d-2">
+            <span class="keyword" style="min-width: 340px; font-size: 38px"
+              >Discovery</span
+            >
+            <span style="font-size: 30px"
+              >Levantar requerimientos detallados.</span
+            >
+          </li>
+          <li class="animate d-3">
+            <span class="keyword" style="min-width: 340px; font-size: 38px"
+              >Perfiles</span
+            >
+            <span style="font-size: 30px"
+              >Definir tipos de cliente y reglas de precios.</span
+            >
+          </li>
+          <li class="animate d-4">
+            <span class="keyword" style="min-width: 340px; font-size: 38px"
+              >Integraciones</span
+            >
+            <span style="font-size: 30px"
+              >Evaluar CRM actual.</span
+            >
+          </li>
+          <li class="animate d-5">
+            <span class="keyword" style="min-width: 340px; font-size: 38px"
+              >Propuesta</span
+            >
+            <span style="font-size: 30px"
+              >Alcance, tiempos y presupuesto detallado.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <!-- SLIDE: Cierre -->
+      <section class="slide slide-cover layout-left fog">
+        <p class="eyebrow animate">GBQ</p>
+        <h1 class="animate d-1">Implementación<br />Digital</h1>
+        <p class="animate d-2 caption" style="margin-top: 64px">
+          Jerónimo Martinez
+        </p>
+      </section>
+
+      <!-- Navigation Controls -->
+      <div class="nav-controls">
+        <button class="nav-btn" onclick="prevSlide()">&#8592;</button>
+        <button class="nav-btn" onclick="nextSlide()">&#8594;</button>
+      </div>
+
+      <!-- Slide Counter -->
+      <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+      </div>
+    </div>
+
+    <script>
+      let currentSlide = 0;
+      const slides = document.querySelectorAll(".slide");
+      const container = document.getElementById("deck-container");
+      const currentSlideEl = document.getElementById("current-slide");
+      const totalSlidesEl = document.getElementById("total-slides");
+
+      totalSlidesEl.textContent = slides.length;
+
+      function resize() {
+        const scaleX = window.innerWidth / 1920;
+        const scaleY = window.innerHeight / 1080;
+        const scale = Math.min(scaleX, scaleY);
+        container.style.transform = `scale(${scale})`;
+      }
+
+      function showSlide(index) {
+        slides.forEach((s) => s.classList.remove("active"));
+        slides[index].classList.add("active");
+        currentSlideEl.textContent = index + 1;
+
+        // Re-trigger animations
+        const current = slides[index];
+        const animatedElements = current.querySelectorAll(".animate");
+        animatedElements.forEach((el) => {
+          el.style.animation = "none";
+          el.offsetHeight;
+          el.style.animation = null;
+        });
+
+        // Re-trigger Gantt bar animations
+        const ganttBars = current.querySelectorAll(".gantt-bar");
+        ganttBars.forEach((bar) => {
+          bar.style.animation = "none";
+          bar.offsetHeight;
+          bar.style.animation = null;
+        });
+      }
+
+      function nextSlide() {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          showSlide(currentSlide);
+        }
+      }
+
+      function prevSlide() {
+        if (currentSlide > 0) {
+          currentSlide--;
+          showSlide(currentSlide);
+        }
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " ") {
+          e.preventDefault();
+          nextSlide();
+        }
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          prevSlide();
+        }
+      });
+
+      // Touch support for mobile
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      document.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      document.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) nextSlide();
+          else prevSlide();
+        }
+      });
+
+      window.addEventListener("resize", resize);
+      resize();
+    </script>
+  </body>
+</html>
